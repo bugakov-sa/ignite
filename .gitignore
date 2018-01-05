@@ -1,0 +1,10 @@
+# Created by .ignore support plugin (hsz.mobi)
+/.gradle/
+/.idea/
+/gradlew
+/gradle/
+/gradlew.bat
+/billing_common/out/
+/billing_service/build/
+/billing_service/out/
+/billing_common/build/

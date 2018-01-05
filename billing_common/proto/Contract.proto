@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package presentation.ignite.billing.entity;
+
+option java_outer_classname = "ContractProto";
+
+enum TrafficType {
+    TRANSACT = 0;
+    SERVICE = 1;
+    AD = 2;
+}
+
+enum RecalcRule {
+    STEP = 0;
+    STAIRS = 1;
+}
+
+message Position {
+    int64 id = 1;
+    int64 unionId = 2;
+    string source = 3;
+    string operator = 4;
+    TrafficType trafficType = 5;
+    RecalcRule recalcRule = 6;
+    map<int64, int64> steps = 7;
+}
+
+message ContractDataV1 {
+    repeated Position positions = 1;
+}
+
+message Contract {
+    ContractDataV1 contractDataV1 = 1;
+}
