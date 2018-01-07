@@ -12,5 +12,7 @@ repositories {
 dependencies {
     compile project(":billing_common")
 
+    compile group: 'org.apache.ignite', name: 'ignite-schedule', version: '1.0.0'
+
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.9.RELEASE'
 }

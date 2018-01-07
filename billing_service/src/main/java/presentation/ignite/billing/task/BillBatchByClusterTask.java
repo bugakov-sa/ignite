@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static presentation.ignite.billing.entity.CacheNames.SMS_CONTRACTS;
+import static presentation.ignite.billing.entity.ClusterObjectNames.SMS_CONTRACTS_CACHE;
 
 public class BillBatchByClusterTask extends ComputeTaskAdapter<List<Message>, List<BilledMessage>> {
 
@@ -42,7 +42,7 @@ public class BillBatchByClusterTask extends ComputeTaskAdapter<List<Message>, Li
     }
 
     private ClusterNode findNodeByLogin(Message message) {
-        return ignite.affinity(SMS_CONTRACTS).mapKeyToNode(message.getLogin());
+        return ignite.affinity(SMS_CONTRACTS_CACHE).mapKeyToNode(message.getLogin());
     }
 
     @Nullable

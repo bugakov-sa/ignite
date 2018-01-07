@@ -50,7 +50,7 @@ public class BillSingleMessageTask {
     }
 
     private ContractProto.Contract findContract(String login) throws InvalidProtocolBufferException {
-        IgniteCache<String, byte[]> contracts = ignite.cache(CacheNames.SMS_CONTRACTS);
+        IgniteCache<String, byte[]> contracts = ignite.cache(ClusterObjectNames.SMS_CONTRACTS_CACHE);
         byte[] contractData = contracts.get(login);
         if (contractData == null) {
             return null;
@@ -73,7 +73,7 @@ public class BillSingleMessageTask {
     }
 
     private long incrementAndGetMessageCounter(long counterId, String login) {
-        IgniteCache<MessageCounterKey, Long> messageCounters = ignite.cache(CacheNames.SMS_COUNTERS);
+        IgniteCache<MessageCounterKey, Long> messageCounters = ignite.cache(ClusterObjectNames.SMS_COUNTERS_CACHE);
         return messageCounters.invoke(
                 new MessageCounterKey(login, counterId),
                 (entry, arguments) -> {
@@ -110,7 +110,7 @@ public class BillSingleMessageTask {
     }
 
     private void changeLoginBalance(String login, long balanceChange) {
-        IgniteCache<String, Long> moneyCounters = ignite.cache(CacheNames.MONEY_COUNTERS);
+        IgniteCache<String, Long> moneyCounters = ignite.cache(ClusterObjectNames.MONEY_COUNTERS_CACHE);
         moneyCounters.invoke(login, (entry, arguments) -> {
             entry.setValue(entry.exists() ? (entry.getValue() + balanceChange) : balanceChange);
             return null;

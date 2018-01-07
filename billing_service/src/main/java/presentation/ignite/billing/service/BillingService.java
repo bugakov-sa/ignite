@@ -10,7 +10,7 @@ import presentation.ignite.billing.task.BillBatchByClusterTask;
 
 import java.util.List;
 
-import static presentation.ignite.billing.entity.CacheNames.SMS_CONTRACTS;
+import static presentation.ignite.billing.entity.ClusterObjectNames.SMS_CONTRACTS_CACHE;
 
 @Service
 public class BillingService {
@@ -19,7 +19,7 @@ public class BillingService {
     private Ignite ignite;
 
     public List<BilledMessage> bill(List<Message> messages) {
-        ClusterGroup clusterGroup = ignite.cluster().forDataNodes(SMS_CONTRACTS);
+        ClusterGroup clusterGroup = ignite.cluster().forDataNodes(SMS_CONTRACTS_CACHE);
         return ignite.compute(clusterGroup).execute(new BillBatchByClusterTask(), messages);
     }
 }
