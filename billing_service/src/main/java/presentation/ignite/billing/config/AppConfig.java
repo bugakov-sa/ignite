@@ -3,13 +3,14 @@ package presentation.ignite.billing.config;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.binary.BinaryObject;
+import org.apache.ignite.cache.CacheKeyConfiguration;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import presentation.ignite.billing.entity.ClusterObjectNames;
-import presentation.ignite.billing.entity.MessageCounterKey;
 
 
 @Configuration
@@ -33,12 +34,15 @@ public class AppConfig {
     }
 
     @Bean
-    public IgniteCache<MessageCounterKey, Long> smsCounters(Ignite ignite) {
+    public IgniteCache<BinaryObject, Long> smsCounters(Ignite ignite) {
         return ignite.getOrCreateCache(new CacheConfiguration()
                 .setName(ClusterObjectNames.SMS_COUNTERS_CACHE)
                 .setCacheMode(CacheMode.PARTITIONED)
                 .setBackups(1)
-                .setOnheapCacheEnabled(true));
+                .setOnheapCacheEnabled(true)
+                .setKeyConfiguration(new CacheKeyConfiguration()
+                        .setTypeName("java.lang.String")
+                        .setAffinityKeyFieldName("login")));
     }
 
     @Bean
