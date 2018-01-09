@@ -13,6 +13,7 @@ public class Message implements Serializable {
     private final String source;
     private final String operator;
     private final TrafficType trafficType;
+    private long contractId;
 
     public Message(long id, String login, String source, String operator, TrafficType trafficType) {
         this.id = id;
@@ -40,5 +41,13 @@ public class Message implements Serializable {
 
     public TrafficType getTrafficType() {
         return trafficType;
+    }
+
+    public long getContractId() {
+        return contractId;
+    }
+
+    public void setContractId(long contractId) {
+        this.contractId = contractId;
     }
 }

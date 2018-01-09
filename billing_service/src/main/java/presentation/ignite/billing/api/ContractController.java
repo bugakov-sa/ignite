@@ -19,11 +19,13 @@ public class ContractController {
     @PostMapping("contract")
     public void saveContract(@RequestBody ContractRequest request) {
         Contract contract = ContractRequestMapper.map(request);
-        contractService.save(request.getLogin(), contract);
+        contractService.save(request.getId(), contract);
     }
 
     @GetMapping("contract")
-    public String readContract(@RequestParam String login) {
-        return Optional.ofNullable(contractService.read(login)).map(Contract::toString).orElse(null);
+    public String readContract(@RequestParam long contractId) {
+        return Optional.ofNullable(contractService.read(contractId))
+                .map(Contract::toString)
+                .orElse(null);
     }
 }

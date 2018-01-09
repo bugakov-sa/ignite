@@ -15,24 +15,24 @@ public class ContractService {
     private static final Logger log = LoggerFactory.getLogger(ContractService.class);
 
     @Autowired
-    private IgniteCache<String, byte[]> contractsCache;
+    private IgniteCache<Long, byte[]> contractsCache;
 
-    public void save(String login, Contract contract) {
-        log.info("Сохранение контракта {} - {}", login, contract);
-        contractsCache.put(login, contract.toByteArray());
-        log.info("Сохранен контракт {} - {}", login, contract);
+    public void save(long contractId, Contract contract) {
+        log.info("Сохранение контракта {} - {}", contractId, contract);
+        contractsCache.put(contractId, contract.toByteArray());
+        log.info("Сохранен контракт {} - {}", contractId, contract);
     }
 
-    public Contract read(String login) {
-        log.info("Запрос контракта логина {}", login);
+    public Contract read(long contractId) {
+        log.info("Запрос контракта {}", contractId);
         try {
-            byte[] contractData = contractsCache.get(login);
+            byte[] contractData = contractsCache.get(contractId);
             if (contractData == null) {
-                log.info("Не найден контракт логина {}", login);
+                log.info("Не найден контракт {}", contractId);
                 return null;
             }
             Contract contract = Contract.parseFrom(contractData);
-            log.info("Ответ на запрос контракта логина {} - {}", login, contract);
+            log.info("Ответ на запрос контракта {} - {}", contractId, contract);
             return contract;
         } catch (InvalidProtocolBufferException e) {
             log.error("Не удалось распарсить контракт ", e);

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ContractRequest {
-    private String login;
+    private long id;
     private List<Position> positions;
 
     public static class Position {
@@ -73,12 +73,12 @@ public class ContractRequest {
         }
     }
 
-    public String getLogin() {
-        return login;
+    public long getId() {
+        return id;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public List<Position> getPositions() {
@@ -92,7 +92,7 @@ public class ContractRequest {
     @Override
     public String toString() {
         return "ContractRequest{" +
-                "login='" + login + '\'' +
+                "id=" + id +
                 ", positions=" + positions +
                 '}';
     }

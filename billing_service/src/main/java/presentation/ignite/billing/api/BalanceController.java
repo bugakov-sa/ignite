@@ -4,16 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import presentation.ignite.billing.service.MoneyService;
+import presentation.ignite.billing.service.BalanceService;
 
 @RestController
-public class MoneyController {
+public class BalanceController {
 
     @Autowired
-    private MoneyService moneyService;
+    private BalanceService balanceService;
 
-    @GetMapping("money")
-    public long getMoneyDebt(@RequestParam String login) {
-        return moneyService.getMoneyDebt(login);
+    @GetMapping("balance")
+    public long getBalance(@RequestParam long contractId) {
+        return balanceService.getBalance(contractId);
     }
 }

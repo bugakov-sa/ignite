@@ -37,7 +37,7 @@ public class BillSingleMessageTask {
     }
 
     private BilledMessage billInternal(Message message) throws Exception {
-        Contract contract = findContract(message.getLogin());
+        Contract contract = findContract(message.getContractId());
         if (contract == null) {
             return new BilledMessage(message.getId(), CONTRACT_NOT_FOUND);
         }
@@ -54,8 +54,9 @@ public class BillSingleMessageTask {
     }
 
     private void billSimplePosition(Position position, Message message) {
-        String login = message.getLogin();
-        long messagesCount = incrementAndGetMessageCounter(position.getId(), login);
+
+        long contractId = message.getContractId();
+        long messagesCount = incrementAndGetMessageCounter(position.getId(), contractId);
 
         long currStepPrice = getStepPrice(position, messagesCount);
         long balanceChange = -currStepPrice;
@@ -68,16 +69,16 @@ public class BillSingleMessageTask {
             }
         }
 
-        changeLoginBalance(login, balanceChange);
+        changeContractBalance(contractId, balanceChange);
     }
 
     private void billUnionPosition(Contract contract, Position messagePosition, Message message) {
 
-        String login = message.getLogin();
+        long contractId = message.getContractId();
         long unionId = messagePosition.getUnionId();
 
-        long messagesCountByOnePosition = incrementAndGetMessageCounter(messagePosition.getId(), login);
-        long messagesCountByUnion = incrementAndGetMessageCounter(unionId, login);
+        long messagesCountByOnePosition = incrementAndGetMessageCounter(messagePosition.getId(), contractId);
+        long messagesCountByUnion = incrementAndGetMessageCounter(unionId, contractId);
 
         long balanceChange = -getStepPrice(messagePosition, messagesCountByUnion);
 
@@ -92,23 +93,23 @@ public class BillSingleMessageTask {
             }
         }
 
-        changeLoginBalance(login, balanceChange);
+        changeContractBalance(contractId, balanceChange);
     }
 
-    private Contract findContract(String login) throws InvalidProtocolBufferException {
-        IgniteCache<String, byte[]> contracts = ignite.cache(SMS_CONTRACTS_CACHE);
-        byte[] contractData = contracts.get(login);
+    private Contract findContract(long contractId) throws InvalidProtocolBufferException {
+        IgniteCache<Long, byte[]> contracts = ignite.cache(SMS_CONTRACTS_CACHE);
+        byte[] contractData = contracts.get(contractId);
         if (contractData == null) {
             return null;
         }
         return Contract.parseFrom(contractData);
     }
 
-    private long incrementAndGetMessageCounter(long counterId, String login) {
+    private long incrementAndGetMessageCounter(long counterId, long contractId) {
         return ignite.<BinaryObject, Long>cache(SMS_COUNTERS_CACHE).invoke(
-                ignite.binary().builder("java.lang.String")
+                ignite.binary().builder("java.lang.Long")
                         .setField("id", counterId)
-                        .setField("login", login)
+                        .setField("contractId", contractId)
                         .build(),
                 (entry, arguments) -> {
                     entry.setValue(entry.exists() ? (entry.getValue() + 1) : 1);
@@ -117,9 +118,9 @@ public class BillSingleMessageTask {
         );
     }
 
-    private void changeLoginBalance(String login, long balanceChange) {
-        ignite.<String, Long>cache(MONEY_COUNTERS_CACHE).invoke(
-                login,
+    private void changeContractBalance(long contractId, long balanceChange) {
+        ignite.<Long, Long>cache(MONEY_COUNTERS_CACHE).invoke(
+                contractId,
                 (entry, arguments) -> {
                     entry.setValue(entry.exists()
                             ? (entry.getValue() + balanceChange)
